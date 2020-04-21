@@ -3,17 +3,17 @@ OS := $(shell uname)
 .PHONY: bk7231u
 bk7231u: 
 	@echo "Build for BK7231u..."
-	@export CFG_SUPPORT_BLE=1 && $(MAKE) -f application.mk application
+	@export CFG_SUPPORT_BLE=1 SOC_NAME=2 && $(MAKE) -f application.mk application
 
 .PHONY: bk7251
 bk7251: 
 	@echo "Build for BK7251..."
-	@export CFG_SUPPORT_BLE=1 && $(MAKE) -f application.mk application
+	@export CFG_SUPPORT_BLE=1 SOC_NAME=3 && $(MAKE) -f application.mk application
 
 .PHONY: bk7231
 bk7231: 
 	@echo "Build for BK7231..."
-	@export CFG_SUPPORT_BLE=0 && $(MAKE) -f application.mk application
+	@export CFG_SUPPORT_BLE=0, SOC_NAME=1 && $(MAKE) -f application.mk application
 
 .PHONY: ip
 ip: 

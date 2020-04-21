@@ -1,4 +1,4 @@
-# bk7231_freertos_full_code
+# bk7251_freertos_sdk
 
 
 
@@ -37,56 +37,6 @@ git branch -r --contains CommitID
 
 
 
-## submodule使用说明
-
-### 创建submodule
-1. `git submodule add http://192.168.0.6/wifi/beken_wifi_sdk.git beken378`
-2. 修改`.gitmodules`中的`url`为相对路径，便于`ssh`和`http`同时使用
-3. `git add .gitmodules beken378`
-4. `git commit -m "xxx"`
-
-注：
-1. 所有`submodules`可能使用不同的分支，建议使用如下命令，指定所有`submodules`（包括主`repository`）的分支
-`git branch --set-upstream-to=origin/xxx master`
-
-
-
-### 获取submodule
-
-> 如果使用`http`而不是`ssh`获取代码，请先运行如下命令(将用户名密码保存到本地文件中，解决`submodule`获取时无法访问的问题)
->
-> `git config --global credential.helper store`
-
-
-
-1. `git clone --recurse-submodules http://xxx.git`
-    或者
-2. `git clone http://xxx.git`
-3. `cd xxx`
-4. `git submodule update --init --recursive`
-
-
-
-### 更新submodule
-可以在`repository`根目录使用`git pull --recurse-submodules`命令更新整个工程
-当然也可以进入特定submodule通过`git pull`单独更新
-
-推荐使用前者更新，因为更新后`submodules`仍然停留在主`repository`关联的`commit`，不会主动切换到最新`commit`
-
-
-
-### 提交submodule
-
-需要先在`submodule`中提交修改，然后在主`repository`中更新`submodule`
-1. `cd beken378` (the submodle name)
-2. `git add xxx`
-3. `git commit -m ""`
-4. `git push origin xxx:yyy`
-5. cd .. (the root of repo)
-6. `git add beken378`
-7. `git commit -m ""`
-8. `git push origin`
-
 
 
 ## Build with Makefile
@@ -104,24 +54,3 @@ make ip
 make ble
 make clean
 ```
-
-
-
-## 版本发布 
-
-在发布版本时，`wifi/ble stack`中的代码编译以库的形式打包，然后对代码打标签并发布，方法如下
-
-- 根据项目实际情况修改`sys_config.h`中的`CFG_SOC_NAME`，并返回项目根目录
-
-编译库文件
-- `scons --buildlib=beken_ip` 编译结束后会根据`CFG_SOC_NAME`重命名为`beken378/ip/libip72xx.a`
-- `scons --buildlib=beken_ble` 编译结束后会重命名为`beken378/driver/ble/libble.a`
-
-编译好库并提交代码以后，需要打标签，由于`submodule`本身就是以`commit id`的形式存在，无需单独打标签。
-（当然，如果为了方便查找，可以用相同名称在相应代码库中打标签。）
-
-- `git tag -a -m "" tag_name`
-- `git push --tags`
-
-运行脚本打包文件并发布
-- run `release_tool.bat`

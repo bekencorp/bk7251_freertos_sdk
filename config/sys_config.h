@@ -79,7 +79,7 @@
 #define CFG_BACKGROUND_PRINT                       0
 #define CFG_SUPPORT_BKREG                          1
 #define CFG_ENABLE_WPA_LOG                         0
-#define CFG_IPERF_TEST                             0
+#define CFG_IPERF_TEST                             1
 #define CFG_TCP_SERVER_TEST                        0
 #define CFG_AIRKISS_TEST                           0
 #define CFG_ENABLE_DEMO_TEST                       0
@@ -158,7 +158,7 @@
 #define CONFIG_APP_MP3PLAYER 			           0
 
 /*section 21 ----- support ota*/
-#define CFG_SUPPORT_OTA_HTTP                       0
+#define CFG_SUPPORT_OTA_HTTP                       1
 #define CFG_SUPPORT_OTA_TFTP                       0
 
 /*section 22 ----- support adc calibrate*/

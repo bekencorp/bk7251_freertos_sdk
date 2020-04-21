@@ -83,6 +83,10 @@ typedef struct {
 } httpclient_data_t;
 
 
+int httpclient_common(httpclient_t *client, const char *url, int port, const char *ca_crt, int method,
+                      uint32_t timeout_ms,
+                      httpclient_data_t *client_data);
+
 
 /**
  * @brief            This function executes a POST request on a given URL. It blocks until completion.

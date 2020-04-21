@@ -1,4 +1,9 @@
+/*
+ * Copyright (C) 2015-2017 Alibaba Group Holding Limited
+ */
+
 #include <string.h>
+
 #include "include.h"
 #include "utils_net.h"
 #include "lite-log.h"
@@ -8,7 +13,6 @@
 #include "utils_timer.h"
 #include "str_pub.h"
 #include "mem_pub.h"
-#include "time.h"
 
 uintptr_t HAL_TCP_Establish(const char *host, uint16_t port)
 {
@@ -334,3 +338,4 @@ int iotx_net_init(utils_network_pt pNetwork, const char *host, uint16_t port, co
 
     return 0;
 }
+

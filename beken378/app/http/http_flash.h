@@ -9,6 +9,7 @@ typedef struct http_data_st{
     UINT8 *wr_buf ;
     UINT16 wr_last_len ;
     UINT32 flash_address;
+    UINT32 flash_len;
     UINT8 *wr_tmp_buf;
     #endif
     DD_HANDLE flash_hdl;

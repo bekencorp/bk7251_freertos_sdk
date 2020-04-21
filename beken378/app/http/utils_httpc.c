@@ -12,6 +12,7 @@
 #include "flash_pub.h"
 #include "mem_pub.h"
 #include "str_pub.h"
+#include "BkDriverFlash.h"
 
 
 #define HTTPCLIENT_MIN(x,y) (((x)<(y))?(x):(y))
@@ -409,7 +410,7 @@ int httpclient_recv(httpclient_t *client, char *buf, int min_len, int max_len, i
     *p_read_len = 0;
 
     ret = client->net.read(&client->net, buf, max_len, iotx_time_left(&timer));
-    //log_debug("Recv: | %s", buf);
+    // log_debug("Recv: | %s", buf);
 
     if (ret > 0) {
         *p_read_len = ret;
@@ -509,7 +510,21 @@ void http_flash_init(void)
     
     bk_http_ptr->wr_last_len = 0;
     ota_wr_block = 0;
-    bk_http_ptr->flash_address = 0xff000;
+
+	bk_logic_partition_t *pt = bk_flash_get_info(BK_PARTITION_OTA_DL_PART);  
+    
+    if(pt == NULL)
+    {
+        os_printf("No OTA_DL_PART in flash\r\n");  
+        ASSERT(1);
+    } 
+    else
+    {
+        bk_http_ptr->flash_address = pt->partition_start_addr;
+        bk_http_ptr->flash_len = pt->partition_length;
+        os_printf("bk_http_ptr->flash_address is %x, and it's length is %x\r\n", bk_http_ptr->flash_address, bk_http_ptr->flash_len);
+    }
+    
     flash_protection_op(FLASH_XTX_16M_SR_WRITE_ENABLE, FLASH_PROTECT_NONE);
 
 }
@@ -521,6 +536,9 @@ void http_flash_deinit(void)
     bk_http_ptr->wr_buf = NULL;
     bk_http_ptr->wr_tmp_buf = NULL;
     bk_http_ptr->wr_last_len = 0; 
+    bk_http_ptr->flash_address = 0;
+    bk_http_ptr->flash_len = 0;
+    
     ota_wr_block = 0;
     ddev_close(bk_http_ptr->flash_hdl);
     flash_protection_op(FLASH_XTX_16M_SR_WRITE_ENABLE, FLASH_UNPROTECT_LAST_BLOCK);
@@ -542,12 +560,12 @@ void http_wr_to_flash(char *page, UINT32 len)
         if(bk_http_ptr->wr_last_len>=HTTP_FLASH_WR_BUF_MAX)
         {
             os_printf (".");
-            #if CFG_SUPPORT_OTA_HTTP //support bk ota format
-            store_block(ota_wr_block, bk_http_ptr->wr_buf, HTTP_FLASH_WR_BUF_MAX);
-            ota_wr_block++;   
-            #else                    //direct wrtie to flash
+            // #if CFG_SUPPORT_OTA_HTTP //support bk ota format
+            // store_block(ota_wr_block, bk_http_ptr->wr_buf, HTTP_FLASH_WR_BUF_MAX);
+            // ota_wr_block++;   
+            // #else                    //direct wrtie to flash
             http_flash_wr(bk_http_ptr->wr_buf, HTTP_FLASH_WR_BUF_MAX);
-            #endif
+            // #endif
             bk_http_ptr->wr_last_len = 0;
         }
     }
@@ -744,11 +762,11 @@ int httpclient_retrieve_content(httpclient_t *client, char *data, int len, uint3
         } else {
             log_debug("no more (content-length)");
 #if HTTP_WR_TO_FLASH     
-            #if CFG_SUPPORT_OTA_HTTP //support bk ota format
-            store_block(ota_wr_block, bk_http_ptr->wr_buf, bk_http_ptr->wr_last_len);
-            #else                    //direct wrtie to flash
+            // #if CFG_SUPPORT_OTA_HTTP //support bk ota format
+            // store_block(ota_wr_block, bk_http_ptr->wr_buf, bk_http_ptr->wr_last_len);
+            // #else                    //direct wrtie to flash
             http_flash_wr(bk_http_ptr->wr_buf, bk_http_ptr->wr_last_len);
-            #endif
+            // #endif
             http_flash_deinit();
 #endif            
             client_data->is_more = false;

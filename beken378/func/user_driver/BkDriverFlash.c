@@ -49,14 +49,22 @@ const bk_logic_partition_t bk7231_partitions[BK_PARTITION_MAX] =
         .partition_owner           = BK_FLASH_EMBEDDED,
         .partition_description     = "Application",
         .partition_start_addr      = 0x11000,
-        .partition_length          = 0x143000,
+        .partition_length          = 0x11A000,   // 1128K
+        .partition_options         = PAR_OPT_READ_EN | PAR_OPT_WRITE_DIS,
+    },
+    [BK_PARTITION_OTA_DL_PART] =
+    {
+        .partition_owner           = BK_FLASH_EMBEDDED,
+        .partition_description     = "Ota dl part",
+        .partition_start_addr      = 0x13D000,
+        .partition_length          = 0xC0000,   // 768k
         .partition_options         = PAR_OPT_READ_EN | PAR_OPT_WRITE_DIS,
     },
     [BK_PARTITION_RF_FIRMWARE] =
     {
         .partition_owner           = BK_FLASH_EMBEDDED,
         .partition_description     = "RF Firmware",
-        .partition_start_addr      = 0x1e0000,// for rf related info
+        .partition_start_addr      = 0x1FD000,// for rf related info
         .partition_length          = 0x1000,
         .partition_options         = PAR_OPT_READ_EN | PAR_OPT_WRITE_DIS,
     },
@@ -64,10 +72,18 @@ const bk_logic_partition_t bk7231_partitions[BK_PARTITION_MAX] =
     {
         .partition_owner           = BK_FLASH_EMBEDDED,
         .partition_description     = "NET info",
-        .partition_start_addr      = 0x1e1000,// for net related info
+        .partition_start_addr      = 0x1FE000,// for net related info
         .partition_length          = 0x1000,
         .partition_options         = PAR_OPT_READ_EN | PAR_OPT_WRITE_DIS,
     },
+    [BK_PARTITION_USR_CONFIG] =
+    {
+        .partition_owner           = BK_FLASH_EMBEDDED,
+        .partition_description     = "USER CFG",
+        .partition_start_addr      = 0x1FF000,// for usr cfg info
+        .partition_length          = 0x1000,
+        .partition_options         = PAR_OPT_READ_EN | PAR_OPT_WRITE_DIS,
+    }
 };
 
 static void BkFlashPartitionAssert( bk_partition_t inPartition )

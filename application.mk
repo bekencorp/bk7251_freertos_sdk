@@ -54,8 +54,11 @@ INCLUDES += -I./beken378/common
 INCLUDES += -I./beken378/demo
 INCLUDES += -I./beken378/app
 INCLUDES += -I./beken378/app/config
+INCLUDES += -I./beken378/app/ftp
+INCLUDES += -I./beken378/app/http
 INCLUDES += -I./beken378/app/standalone-station
 INCLUDES += -I./beken378/app/standalone-ap
+INCLUDES += -I./beken378/app/tftp
 INCLUDES += -I./beken378/ip/common
 INCLUDES += -I./beken378/ip/ke/
 INCLUDES += -I./beken378/ip/mac/
@@ -239,6 +242,13 @@ SRC_C += ./beken378/app/ate_app.c
 SRC_C += ./beken378/app/config/param_config.c
 SRC_C += ./beken378/app/standalone-ap/sa_ap.c
 SRC_C += ./beken378/app/standalone-station/sa_station.c
+SRC_C += ./beken378/app/ftp/ftpd.c
+SRC_C += ./beken378/app/ftp/vfs.c
+SRC_C += ./beken378/app/http/lite-log.c
+SRC_C += ./beken378/app/http/utils_httpc.c
+SRC_C += ./beken378/app/http/utils_net.c
+SRC_C += ./beken378/app/http/utils_timer.c
+SRC_C += ./beken378/app/tftp/tftpclient.c
 
 #demo module
 SRC_C += ./beken378/demo/ieee802_11_demo.c
@@ -613,6 +623,20 @@ DEPENDENCY_S_LIST = $(SRC_S:%.S=$(OBJ_DIR)/%.d)
 OBJ_OS_LIST = $(SRC_OS:%.c=$(OBJ_DIR)/%.marm.o)
 DEPENDENCY_OS_LIST = $(SRC_OS:%.c=$(OBJ_DIR)/%.d)
 
+ifeq ($(SOC_NAME), 1)
+SOC_NAME_ELF = beken7231.elf
+SOC_NAME_BIN = beken7231.bin
+SOC_NAME_MAP = beken7231.map
+else ifeq ($(SOC_NAME), 2)
+SOC_NAME_ELF = beken7231u.elf
+SOC_NAME_BIN = beken7231u.bin
+SOC_NAME_MAP = beken7231u.map
+else ifeq ($(SOC_NAME), 3)
+SOC_NAME_ELF = beken7251.elf
+SOC_NAME_BIN = beken7251.bin
+SOC_NAME_MAP = beken7251.map
+endif
+
 # Compile options
 # -------------------------------------------------------------------
 CFLAGS =
@@ -657,13 +681,13 @@ LIBFLAGS += -L./beken378/func/airkiss -lairkiss
 CUR_PATH = $(shell pwd)
 .PHONY: application
 application: $(OBJ_LIST) $(OBJ_S_LIST) $(OBJ_OS_LIST)
-	@echo LD $(BIN_DIR)/beken7231.elf
-	@$(LD) $(LFLAGS) -o $(BIN_DIR)/beken7231.elf $(OBJ_LIST) $(OBJ_S_LIST) $(OBJ_OS_LIST) $(LIBFLAGS) -T./build/bk7231.ld -Xlinker -Map=$(BIN_DIR)/beken7231.map
-	$(OBJCOPY) -O binary $(BIN_DIR)/beken7231.elf $(BIN_DIR)/beken7231.bin
-#	$(OBJDUMP) -d $(BIN_DIR)/beken7231.elf >> $(BIN_DIR)/beken7231.asm
+	@echo LD $(BIN_DIR)/$(SOC_NAME_ELF)
+	@$(LD) $(LFLAGS) -o $(BIN_DIR)/$(SOC_NAME_ELF) $(OBJ_LIST) $(OBJ_S_LIST) $(OBJ_OS_LIST) $(LIBFLAGS) -T./build/bk7231_ota.ld -Xlinker -Map=$(BIN_DIR)/$(SOC_NAME_MAP)
+	$(OBJCOPY) -O binary $(BIN_DIR)/$(SOC_NAME_ELF) $(BIN_DIR)/$(SOC_NAME_BIN)
+#	$(OBJDUMP) -d $(BIN_DIR)/$(SOC_NAME_ELF) >> $(BIN_DIR)/beken7231.asm
 	@echo "                                                        "
 	@echo "crc binary operation"
-	$(ENCRYPT) $(BIN_DIR)/beken7231.bin 0 $(ENCRYPT_ARGS)
+	$(ENCRYPT) $(BIN_DIR)/$(SOC_NAME_BIN) 0 $(ENCRYPT_ARGS)
 
 # Generate build info
 # -------------------------------------------------------------------	
