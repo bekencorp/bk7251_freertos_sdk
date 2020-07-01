@@ -103,8 +103,29 @@ static UINT32 irda_get_key(void)
 		index=0xFF;
 	}
 
-//	IRDA_PRT("IR_Code is : %x, IR KEY is:%x\r\n", Recv_IR_Code,index);
+	IRDA_PRT("IR_Code is : %x, IR KEY is:%x\r\n", Recv_IR_Code,index);
 	return index;
+}
+
+static void trng_active(UINT8 enable)
+{
+	UINT32 value;
+
+	value = REG_READ(TRNG_CTRL);
+	if(enable)
+	{
+		value |= TRNG_EN;
+	}
+	else
+	{
+		value &= ~TRNG_EN;
+	}
+	REG_WRITE(TRNG_CTRL, value);
+}
+
+static UINT32 trng_get_random(void)
+{
+	return REG_READ(TRNG_DATA);
 }
 
 void irda_init(void)
@@ -114,6 +135,8 @@ void irda_init(void)
 	intc_service_register(IRQ_IRDA, PRI_IRQ_IRDA, irda_isr); 
 	
 	sddev_register_dev(IRDA_DEV_NAME, &irda_op);
+
+	trng_active(1);
 }
 
 void irda_exit(void)
@@ -137,6 +160,12 @@ static UINT32 irda_ctrl(UINT32 cmd, void *param)
 			break;
 		case IRDA_CMD_GET_KEY:
 			*(UINT32 *)param = irda_get_key();
+			break;
+		case TRNG_CMD_SET:
+			trng_active(*(UINT8 *)param);
+			break;
+		case TRNG_CMD_GET:
+			*(UINT32 *)param = trng_get_random();
 			break;
 		default:
 			ret = IRDA_FAILURE;

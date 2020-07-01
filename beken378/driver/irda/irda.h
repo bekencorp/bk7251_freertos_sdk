@@ -1,9 +1,12 @@
 #ifndef _IRDA_H_
 #define _IRDA_H_
 
-#define IRDA_DEBUG
+#include "include.h"
+#include "uart_pub.h"
 
-#ifdef IRDA_DEBUG
+#define IRDA_DEBUG       0
+
+#if IRDA_DEBUG
     #define IRDA_PRT      os_printf
 	#define IRDA_WARN     warning_prf
 	#define IRDA_FATAL    fatal_prf
@@ -48,6 +51,13 @@
 
 #define	IR_UserCode 	0xFD02 /*each remote-contrl unit has own code*/
 #define	IR_CODE_SIZE 	18
+
+#define TRNG_BASE                     (0x00802480)
+
+#define TRNG_CTRL                     (TRNG_BASE + 0 * 4)
+#define TRNG_EN                       (0x01UL << 0)
+
+#define TRNG_DATA                     (TRNG_BASE + 1 * 4)
 
 /*******************************************************************************
 * Function Declarations

@@ -12,7 +12,9 @@ enum
     IRDA_CMD_ACTIVE = IRDA_CMD_MAGIC + 1,
     IRDA_CMD_SET_POLARITY,
     IRDA_CMD_SET_CLK,
-    IRDA_CMD_GET_KEY
+    IRDA_CMD_GET_KEY,
+    TRNG_CMD_SET,
+    TRNG_CMD_GET
 };
 
 /*******************************************************************************
